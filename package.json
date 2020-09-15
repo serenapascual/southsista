@@ -1,0 +1,30 @@
+{
+  "name": "southsista",
+  "version": "1.0.0",
+  "description": "exploring animation with three.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/serenapascual/southsista.git"
+  },
+  "author": "Serena Pascual <serena.a.pascual@gmail.com>",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/serenapascual/southsista/issues"
+  },
+  "homepage": "https://github.com/serenapascual/southsista#readme",
+  "devDependencies": {
+    "eslint": "^7.9.0",
+    "eslint-config-airbnb": "^18.2.0",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-jsx-a11y": "^6.3.1",
+    "eslint-plugin-react": "^7.20.6",
+    "eslint-plugin-react-hooks": "^4.1.2"
+  },
+  "dependencies": {
+    "three": "^0.120.1"
+  }
+}
