@@ -35,6 +35,9 @@ let camera;
 let aspectRatio;
 let renderer;
 let controls;
+let clock;
+let delta;
+let butterfly;
 
 function handleWindowResize() {
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -69,6 +72,8 @@ function createScene() {
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
+  clock = new THREE.Clock();
+
   controls = new OrbitControls(camera, renderer.domElement);
 
   const container = document.getElementById('world');
@@ -92,6 +97,8 @@ function createLights() {
   left hindwing, right hindwing.
 */
 function Butterfly() {
+  this.theta = 0;
+
   this.mesh = new THREE.Group();
   this.body = new THREE.Group();
   this.wings = new THREE.Group();
@@ -102,14 +109,12 @@ function Butterfly() {
   this.head = new THREE.Mesh(headGeo, brownMat);
   this.head.position.x = -2.45;
   this.head.position.y = 0.35;
-  this.head.castShadow = true;
-  this.head.receiveShadow = true;
+  // this.head.castShadow = true;
+  // this.head.receiveShadow = true;
   this.body.add(this.head);
 
   const thoraxGeo = new THREE.BoxGeometry(3.5, 1, 1.5);
   this.thorax = new THREE.Mesh(thoraxGeo, brownMat);
-  this.thorax.castShadow = true;
-  this.thorax.receiveShadow = true;
   this.body.add(this.thorax);
 
   const abdomenGeo = new THREE.BoxGeometry(2, 0.75, 1);
@@ -117,8 +122,6 @@ function Butterfly() {
   this.abdomen.rotateZ(0.9375 * PI);
   this.abdomen.position.x = 2.9;
   this.abdomen.position.y = -0.2;
-  this.abdomen.castShadow = true;
-  this.abdomen.receiveShadow = true;
   this.body.add(this.abdomen);
 
   const antennaGeo = new THREE.ConeGeometry(0.075, 2, 5);
@@ -150,7 +153,7 @@ function Butterfly() {
   this.forewingR = new THREE.Mesh(forewingRGeo, orangeMat);
   this.forewingR.rotateX(-0.0625 * PI);
   this.forewingR.position.x = -0.5;
-  this.forewingR.position.y = -0.15;
+  this.forewingR.position.y = -0.2;
   this.forewingR.position.z = -3.275;
   this.wings.add(this.forewingR);
 
@@ -165,23 +168,25 @@ function Butterfly() {
   hindwingRGeo.vertices[3].z += 1.5;
   this.hindwingR = new THREE.Mesh(hindwingRGeo, orangeMat);
   this.hindwingR.rotateX(-0.0625 * PI);
+  this.hindwingR.rotateZ(0.03125 * PI);
   this.hindwingR.position.x = 1.3;
-  this.hindwingR.position.y = -0.35;
+  this.hindwingR.position.y = -0.4;
   this.hindwingR.position.z = -2.9;
   this.wings.add(this.hindwingR);
 
   /* LEFT WINGS */
-  const forewingLGeo = new THREE.BoxGeometry(2, 0.15, 4.75);
-  forewingLGeo.vertices[5].x -= 1.5; // front-left-top
-  forewingLGeo.vertices[5].z += 2.5;
-  forewingLGeo.vertices[7].x -= 1.5; // front-left-bottom
-  forewingLGeo.vertices[7].z += 2.5;
-  forewingLGeo.vertices[0].x += 2; // back-left-top
-  forewingLGeo.vertices[2].x += 2; // back-left-bottom
-  this.forewingL = new THREE.Mesh(forewingLGeo, orangeMat);
+  this.forewingLGeo = new THREE.BoxGeometry(2, 0.15, 4.75);
+  this.forewingLGeo.vertices[5].x -= 1.5; // front-left-top
+  this.forewingLGeo.vertices[5].z += 2.5;
+  this.forewingLGeo.vertices[7].x -= 1.5; // front-left-bottom
+  this.forewingLGeo.vertices[7].z += 2.5;
+  this.forewingLGeo.vertices[0].x += 2; // back-left-top
+  this.forewingLGeo.vertices[2].x += 2; // back-left-bottom
+
+  this.forewingL = new THREE.Mesh(this.forewingLGeo, orangeMat);
   this.forewingL.rotateX(0.0625 * PI);
   this.forewingL.position.x = -0.5;
-  this.forewingL.position.y = -0.15;
+  this.forewingL.position.y = -0.2;
   this.forewingL.position.z = 3.275;
   this.wings.add(this.forewingL);
 
@@ -196,16 +201,45 @@ function Butterfly() {
   hindwingLGeo.vertices[2].z -= 1.5;
   this.hindwingL = new THREE.Mesh(hindwingLGeo, orangeMat);
   this.hindwingL.rotateX(0.0625 * PI);
+  this.hindwingL.rotateZ(-0.03125 * PI);
   this.hindwingL.position.x = 1.3;
-  this.hindwingL.position.y = -0.35;
+  this.hindwingL.position.y = -0.4;
   this.hindwingL.position.z = 2.9;
   this.wings.add(this.hindwingL);
+
+  function createShadows(object) {
+    if (object instanceof THREE.Mesh) {
+      object.castShadow = true;
+      object.receiveShadow = true;
+    }
+  }
+
+  this.body.traverse(createShadows);
+  this.wings.traverse(createShadows);
 }
 
 function createButterfly() {
-  const butterfly = new Butterfly();
+  butterfly = new Butterfly();
   scene.add(butterfly.mesh);
 }
+
+const wingFlapMatrix = new THREE.Matrix4();
+
+Butterfly.prototype.fly = function() {
+  this.theta += delta;
+  let t = this.theta; // our working angle
+  t %= (2 * PI); // restrict range to [0, 2pi]
+
+  wingFlapMatrix.set(1, 0, 0, 0,
+    0, cos(t), -sin(t), 0,
+    0, sin(t), cos(t), 0,
+    0, 0, 0, 1);
+
+  this.forewingLGeo.vertices[5].applyMatrix4(wingFlapMatrix);
+  this.forewingLGeo.vertices[7].applyMatrix4(wingFlapMatrix);
+  this.forewingLGeo.vertices[0].applyMatrix4(wingFlapMatrix);
+  this.forewingLGeo.vertices[2].applyMatrix4(wingFlapMatrix);
+};
 
 function init() {
   createScene();
@@ -214,9 +248,11 @@ function init() {
 }
 
 function draw() {
-  requestAnimationFrame(draw);
+  delta = clock.getDelta();
   controls.update();
+  butterfly.fly();
   renderer.render(scene, camera);
+  requestAnimationFrame(draw);
 }
 
 init();
