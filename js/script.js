@@ -97,7 +97,7 @@ function createLights() {
   left hindwing, right hindwing.
 */
 function Butterfly() {
-  this.theta = 0;
+  this.phase = 0;
 
   this.mesh = new THREE.Group();
   this.body = new THREE.Group();
@@ -142,38 +142,6 @@ function Butterfly() {
   this.antennaR.position.z = -0.5;
   this.body.add(this.antennaR);
 
-  /* RIGHT WINGS */
-  const forewingRGeo = new THREE.BoxGeometry(2, 0.15, 4.75);
-  forewingRGeo.vertices[4].x -= 1.5; // front-right-top
-  forewingRGeo.vertices[4].z -= 2.5;
-  forewingRGeo.vertices[6].x -= 1.5; // front-right-bottom
-  forewingRGeo.vertices[6].z -= 2.5;
-  forewingRGeo.vertices[1].x += 2; // back-right-top
-  forewingRGeo.vertices[3].x += 2; // back-right-bottom
-  this.forewingR = new THREE.Mesh(forewingRGeo, orangeMat);
-  this.forewingR.rotateX(-0.0625 * PI);
-  this.forewingR.position.x = -0.5;
-  this.forewingR.position.y = -0.2;
-  this.forewingR.position.z = -3.275;
-  this.wings.add(this.forewingR);
-
-  const hindwingRGeo = new THREE.BoxGeometry(1.5, 0.15, 4);
-  hindwingRGeo.vertices[4].z -= 1.25; // front-right-top
-  hindwingRGeo.vertices[4].x += 0.25;
-  hindwingRGeo.vertices[6].z -= 1.25; // front-right-bottom
-  hindwingRGeo.vertices[6].x += 0.25;
-  hindwingRGeo.vertices[1].x += 4.5; // back-right-top
-  hindwingRGeo.vertices[1].z += 1.5;
-  hindwingRGeo.vertices[3].x += 4.5; // back-right-bottom
-  hindwingRGeo.vertices[3].z += 1.5;
-  this.hindwingR = new THREE.Mesh(hindwingRGeo, orangeMat);
-  this.hindwingR.rotateX(-0.0625 * PI);
-  this.hindwingR.rotateZ(0.03125 * PI);
-  this.hindwingR.position.x = 1.3;
-  this.hindwingR.position.y = -0.4;
-  this.hindwingR.position.z = -2.9;
-  this.wings.add(this.hindwingR);
-
   /* LEFT WINGS */
   this.forewingLGeo = new THREE.BoxGeometry(2, 0.15, 4.75);
   this.forewingLGeo.vertices[5].x -= 1.5; // front-left-top
@@ -207,6 +175,39 @@ function Butterfly() {
   this.hindwingL.position.z = 2.9;
   this.wings.add(this.hindwingL);
 
+  /* RIGHT WINGS */
+  this.forewingRGeo = new THREE.BoxGeometry(2, 0.15, 4.75);
+  this.forewingRGeo.vertices[4].x -= 1.5; // front-right-top
+  this.forewingRGeo.vertices[4].z -= 2.5;
+  this.forewingRGeo.vertices[6].x -= 1.5; // front-right-bottom
+  this.forewingRGeo.vertices[6].z -= 2.5;
+  this.forewingRGeo.vertices[1].x += 2; // back-right-top
+  this.forewingRGeo.vertices[3].x += 2; // back-right-bottom
+
+  this.forewingR = new THREE.Mesh(this.forewingRGeo, orangeMat);
+  this.forewingR.rotateX(-0.0625 * PI);
+  this.forewingR.position.x = -0.5;
+  this.forewingR.position.y = -0.2;
+  this.forewingR.position.z = -3.275;
+  this.wings.add(this.forewingR);
+
+  const hindwingRGeo = new THREE.BoxGeometry(1.5, 0.15, 4);
+  hindwingRGeo.vertices[4].z -= 1.25; // front-right-top
+  hindwingRGeo.vertices[4].x += 0.25;
+  hindwingRGeo.vertices[6].z -= 1.25; // front-right-bottom
+  hindwingRGeo.vertices[6].x += 0.25;
+  hindwingRGeo.vertices[1].x += 4.5; // back-right-top
+  hindwingRGeo.vertices[1].z += 1.5;
+  hindwingRGeo.vertices[3].x += 4.5; // back-right-bottom
+  hindwingRGeo.vertices[3].z += 1.5;
+  this.hindwingR = new THREE.Mesh(hindwingRGeo, orangeMat);
+  this.hindwingR.rotateX(-0.0625 * PI);
+  this.hindwingR.rotateZ(0.03125 * PI);
+  this.hindwingR.position.x = 1.3;
+  this.hindwingR.position.y = -0.4;
+  this.hindwingR.position.z = -2.9;
+  this.wings.add(this.hindwingR);
+
   function createShadows(object) {
     if (object instanceof THREE.Mesh) {
       object.castShadow = true;
@@ -223,28 +224,84 @@ function createButterfly() {
   scene.add(butterfly.mesh);
 }
 
-const wingFlapMatrix = new THREE.Matrix4();
+const wingLFlapMatrix = new THREE.Matrix4();
+const wingRFlapMatrix = new THREE.Matrix4();
+let counterClockwise = true;
 
 Butterfly.prototype.fly = function() {
-  this.theta += delta;
-  let t = this.theta; // our working angle
-  t %= (2 * PI); // restrict range to [0, 2pi]
+  this.phase = 0.04;
+  let t = this.phase; // our working angle
+  t %= (PI / 16); // restrict range to [0, pi/16]
 
-  wingFlapMatrix.set(1, 0, 0, 0,
-    0, cos(t), -sin(t), 0,
-    0, sin(t), cos(t), 0,
-    0, 0, 0, 1);
+  if (this.forewingLGeo.vertices[5].z < -2.375) {
+    counterClockwise = !counterClockwise;
+  }
 
-  this.forewingLGeo.vertices[5].applyMatrix4(wingFlapMatrix);
-  this.forewingLGeo.vertices[7].applyMatrix4(wingFlapMatrix);
-  this.forewingLGeo.vertices[0].applyMatrix4(wingFlapMatrix);
-  this.forewingLGeo.vertices[2].applyMatrix4(wingFlapMatrix);
+  if (counterClockwise) {
+    wingLFlapMatrix.set(1, 0, 0, 0,
+      0, cos(t), -sin(t), 0,
+      0, sin(t), cos(t), 0,
+      0, 0, 0, 1);
+    wingRFlapMatrix.set(1, 0, 0, 0,
+      0, cos(t), sin(t), 0,
+      0, -sin(t), cos(t), 0,
+      0, 0, 0, 1);
+  } else {
+    wingLFlapMatrix.set(1, 0, 0, 0,
+      0, cos(t), sin(t), 0,
+      0, -sin(t), cos(t), 0,
+      0, 0, 0, 1);
+    wingRFlapMatrix.set(1, 0, 0, 0,
+      0, cos(t), -sin(t), 0,
+      0, sin(t), cos(t), 0,
+      0, 0, 0, 1);
+  }
+
+  this.forewingLGeo.vertices[5].applyMatrix4(wingLFlapMatrix);
+  this.forewingLGeo.vertices[7].applyMatrix4(wingLFlapMatrix);
+  this.forewingLGeo.vertices[0].applyMatrix4(wingLFlapMatrix);
+  this.forewingLGeo.vertices[2].applyMatrix4(wingLFlapMatrix);
+  this.forewingRGeo.vertices[4].applyMatrix4(wingRFlapMatrix);
+  this.forewingRGeo.vertices[6].applyMatrix4(wingRFlapMatrix);
+  this.forewingRGeo.vertices[1].applyMatrix4(wingRFlapMatrix);
+  this.forewingRGeo.vertices[3].applyMatrix4(wingRFlapMatrix);
+
+  this.forewingLGeo.verticesNeedUpdate = true;
+  this.forewingRGeo.verticesNeedUpdate = true;
 };
+
+function showAxes() {
+  const redMat = new THREE.LineBasicMaterial({
+    color: 0xff0000,
+  });
+  const greenMat = new THREE.LineBasicMaterial({
+    color: 0x00ff00,
+  });
+  const blueMat = new THREE.LineBasicMaterial({
+    color: 0x0000ff,
+  });
+  const origin = new THREE.Vector3(0, 0, 0);
+  const x = new THREE.Vector3(10, 0, 0);
+  const y = new THREE.Vector3(0, 10, 0);
+  const z = new THREE.Vector3(0, 0, 10);
+
+  const xGeo = new THREE.BufferGeometry().setFromPoints([origin, x]);
+  const xAxis = new THREE.Line(xGeo, redMat);
+  const yGeo = new THREE.BufferGeometry().setFromPoints([origin, y]);
+  const yAxis = new THREE.Line(yGeo, greenMat);
+  const zGeo = new THREE.BufferGeometry().setFromPoints([origin, z]);
+  const zAxis = new THREE.Line(zGeo, blueMat);
+
+  scene.add(xAxis);
+  scene.add(yAxis);
+  scene.add(zAxis);
+}
 
 function init() {
   createScene();
   createLights();
   createButterfly();
+  showAxes();
 }
 
 function draw() {
