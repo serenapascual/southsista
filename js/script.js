@@ -60,8 +60,8 @@ function createScene() {
     farPlane,
   );
 
-  camera.position.x = 0;
-  camera.position.y = 0;
+  camera.position.x = 25;
+  camera.position.y = 10;
   camera.position.z = 25;
 
   renderer = new THREE.WebGLRenderer({
@@ -98,7 +98,6 @@ function createLights() {
 */
 function Butterfly() {
   this.phase = 0;
-
   this.mesh = new THREE.Group();
   this.body = new THREE.Group();
   this.wings = new THREE.Group();
@@ -109,8 +108,8 @@ function Butterfly() {
   this.head = new THREE.Mesh(headGeo, brownMat);
   this.head.position.x = -2.45;
   this.head.position.y = 0.35;
-  // this.head.castShadow = true;
-  // this.head.receiveShadow = true;
+  this.head.castShadow = true;
+  this.head.receiveShadow = true;
   this.body.add(this.head);
 
   const thoraxGeo = new THREE.BoxGeometry(3.5, 1, 1.5);
@@ -151,29 +150,29 @@ function Butterfly() {
   this.forewingLGeo.vertices[0].x += 2; // back-left-top
   this.forewingLGeo.vertices[2].x += 2; // back-left-bottom
 
-  this.forewingL = new THREE.Mesh(this.forewingLGeo, orangeMat);
-  this.forewingL.rotateX(0.0625 * PI);
-  this.forewingL.position.x = -0.5;
-  this.forewingL.position.y = -0.2;
-  this.forewingL.position.z = 3.275;
-  this.wings.add(this.forewingL);
+  const forewingL = new THREE.Mesh(this.forewingLGeo, orangeMat);
+  forewingL.rotateX(0.0625 * PI);
+  forewingL.position.x = -0.5;
+  forewingL.position.y = -0.2;
+  forewingL.position.z = 3.275;
+  this.wings.add(forewingL);
 
-  const hindwingLGeo = new THREE.BoxGeometry(1.5, 0.15, 4);
-  hindwingLGeo.vertices[5].z += 1.25; // front-left-top
-  hindwingLGeo.vertices[5].x += 0.25;
-  hindwingLGeo.vertices[7].z += 1.25; // front-left-bottom
-  hindwingLGeo.vertices[7].x += 0.25;
-  hindwingLGeo.vertices[0].x += 4.5; // back-left-top
-  hindwingLGeo.vertices[0].z -= 1.5;
-  hindwingLGeo.vertices[2].x += 4.5; // back-left-bottom
-  hindwingLGeo.vertices[2].z -= 1.5;
-  this.hindwingL = new THREE.Mesh(hindwingLGeo, orangeMat);
-  this.hindwingL.rotateX(0.0625 * PI);
-  this.hindwingL.rotateZ(-0.03125 * PI);
-  this.hindwingL.position.x = 1.3;
-  this.hindwingL.position.y = -0.4;
-  this.hindwingL.position.z = 2.9;
-  this.wings.add(this.hindwingL);
+  this.hindwingLGeo = new THREE.BoxGeometry(1.5, 0.15, 4);
+  this.hindwingLGeo.vertices[5].z += 1.25; // front-left-top
+  this.hindwingLGeo.vertices[5].x += 0.25;
+  this.hindwingLGeo.vertices[7].z += 1.25; // front-left-bottom
+  this.hindwingLGeo.vertices[7].x += 0.25;
+  this.hindwingLGeo.vertices[0].x += 4.5; // back-left-top
+  this.hindwingLGeo.vertices[0].z -= 1.5;
+  this.hindwingLGeo.vertices[2].x += 4.5; // back-left-bottom
+  this.hindwingLGeo.vertices[2].z -= 1.5;
+  const hindwingL = new THREE.Mesh(this.hindwingLGeo, orangeMat);
+  hindwingL.rotateX(0.0625 * PI);
+  hindwingL.rotateZ(-0.03125 * PI);
+  hindwingL.position.x = 1.3;
+  hindwingL.position.y = -0.4;
+  hindwingL.position.z = 2.9;
+  this.wings.add(hindwingL);
 
   /* RIGHT WINGS */
   this.forewingRGeo = new THREE.BoxGeometry(2, 0.15, 4.75);
@@ -184,29 +183,30 @@ function Butterfly() {
   this.forewingRGeo.vertices[1].x += 2; // back-right-top
   this.forewingRGeo.vertices[3].x += 2; // back-right-bottom
 
-  this.forewingR = new THREE.Mesh(this.forewingRGeo, orangeMat);
-  this.forewingR.rotateX(-0.0625 * PI);
-  this.forewingR.position.x = -0.5;
-  this.forewingR.position.y = -0.2;
-  this.forewingR.position.z = -3.275;
-  this.wings.add(this.forewingR);
+  const forewingR = new THREE.Mesh(this.forewingRGeo, orangeMat);
+  forewingR.rotateX(-0.0625 * PI);
+  forewingR.position.x = -0.5;
+  forewingR.position.y = -0.2;
+  forewingR.position.z = -3.275;
+  this.wings.add(forewingR);
 
-  const hindwingRGeo = new THREE.BoxGeometry(1.5, 0.15, 4);
-  hindwingRGeo.vertices[4].z -= 1.25; // front-right-top
-  hindwingRGeo.vertices[4].x += 0.25;
-  hindwingRGeo.vertices[6].z -= 1.25; // front-right-bottom
-  hindwingRGeo.vertices[6].x += 0.25;
-  hindwingRGeo.vertices[1].x += 4.5; // back-right-top
-  hindwingRGeo.vertices[1].z += 1.5;
-  hindwingRGeo.vertices[3].x += 4.5; // back-right-bottom
-  hindwingRGeo.vertices[3].z += 1.5;
-  this.hindwingR = new THREE.Mesh(hindwingRGeo, orangeMat);
-  this.hindwingR.rotateX(-0.0625 * PI);
-  this.hindwingR.rotateZ(0.03125 * PI);
-  this.hindwingR.position.x = 1.3;
-  this.hindwingR.position.y = -0.4;
-  this.hindwingR.position.z = -2.9;
-  this.wings.add(this.hindwingR);
+  this.hindwingRGeo = new THREE.BoxGeometry(1.5, 0.15, 4);
+  this.hindwingRGeo.vertices[4].z -= 1.25; // front-right-top
+  this.hindwingRGeo.vertices[4].x += 0.25;
+  this.hindwingRGeo.vertices[6].z -= 1.25; // front-right-bottom
+  this.hindwingRGeo.vertices[6].x += 0.25;
+  this.hindwingRGeo.vertices[1].x += 4.5; // back-right-top
+  this.hindwingRGeo.vertices[1].z += 1.5;
+  this.hindwingRGeo.vertices[3].x += 4.5; // back-right-bottom
+  this.hindwingRGeo.vertices[3].z += 1.5;
+
+  const hindwingR = new THREE.Mesh(this.hindwingRGeo, orangeMat);
+  hindwingR.rotateX(-0.0625 * PI);
+  hindwingR.rotateZ(0.03125 * PI);
+  hindwingR.position.x = 1.3;
+  hindwingR.position.y = -0.4;
+  hindwingR.position.z = -2.9;
+  this.wings.add(hindwingR);
 
   function createShadows(object) {
     if (object instanceof THREE.Mesh) {
@@ -222,52 +222,107 @@ function Butterfly() {
 function createButterfly() {
   butterfly = new Butterfly();
   scene.add(butterfly.mesh);
+  console.log(butterfly);
 }
 
-const wingLFlapMatrix = new THREE.Matrix4();
-const wingRFlapMatrix = new THREE.Matrix4();
-let counterClockwise = true;
+const forewingCCWMatrix = new THREE.Matrix4();
+const forewingCWMatrix = new THREE.Matrix4();
+const hindwingCCWMatrix = new THREE.Matrix4();
+const hindwingCWMatrix = new THREE.Matrix4();
+let foreFlapDown = true;
+let hindFlapDown = true;
 
-Butterfly.prototype.fly = function() {
-  this.phase = 0.04;
-  let t = this.phase; // our working angle
+Butterfly.prototype.fly = function () {
+  this.phase = 0.065;
+  // this.phase += 0.01;
+  let t = this.phase; // angle for forewings
   t %= (PI / 16); // restrict range to [0, pi/16]
+  const p = t - 0.01; // angle for hindwings
 
-  if (this.forewingLGeo.vertices[5].z < -2.375) {
-    counterClockwise = !counterClockwise;
-  }
+  forewingCCWMatrix.set(1, 0, 0, 0,
+    0, cos(t), -sin(t), 0,
+    0, sin(t), cos(t), 0,
+    0, 0, 0, 1);
+  forewingCWMatrix.set(1, 0, 0, 0,
+    0, cos(t), sin(t), 0,
+    0, -sin(t), cos(t), 0,
+    0, 0, 0, 1);
+  hindwingCCWMatrix.set(1, 0, 0, 0,
+    0, cos(p), -sin(p), 0,
+    0, sin(p), cos(p), 0,
+    0, 0, 0, 1);
+  hindwingCWMatrix.set(1, 0, 0, 0,
+    0, cos(p), sin(p), 0,
+    0, -sin(p), cos(p), 0,
+    0, 0, 0, 1);
 
-  if (counterClockwise) {
-    wingLFlapMatrix.set(1, 0, 0, 0,
-      0, cos(t), -sin(t), 0,
-      0, sin(t), cos(t), 0,
-      0, 0, 0, 1);
-    wingRFlapMatrix.set(1, 0, 0, 0,
-      0, cos(t), sin(t), 0,
-      0, -sin(t), cos(t), 0,
-      0, 0, 0, 1);
+  if (foreFlapDown) {
+    this.forewingLGeo.vertices[5].applyMatrix4(forewingCCWMatrix);
+    this.forewingLGeo.vertices[7].applyMatrix4(forewingCCWMatrix);
+    this.forewingLGeo.vertices[0].applyMatrix4(forewingCCWMatrix);
+    this.forewingLGeo.vertices[2].applyMatrix4(forewingCCWMatrix);
+    // this.forewingLGeo.vertices[5].y = cos(-this.phase);
+    // this.forewingLGeo.vertices[5].z = 2.5 + cos(-this.phase);
+    // this.forewingLGeo.vertices[7].y = cos(-this.phase);
+    // this.forewingLGeo.vertices[7].z = 2.5 + cos(-this.phase);
+
+    this.forewingRGeo.vertices[4].applyMatrix4(forewingCWMatrix);
+    this.forewingRGeo.vertices[6].applyMatrix4(forewingCWMatrix);
+    this.forewingRGeo.vertices[1].applyMatrix4(forewingCWMatrix);
+    this.forewingRGeo.vertices[3].applyMatrix4(forewingCWMatrix);
+    // this.abdomen.rotation.z = cos(-this.phase);
   } else {
-    wingLFlapMatrix.set(1, 0, 0, 0,
-      0, cos(t), sin(t), 0,
-      0, -sin(t), cos(t), 0,
-      0, 0, 0, 1);
-    wingRFlapMatrix.set(1, 0, 0, 0,
-      0, cos(t), -sin(t), 0,
-      0, sin(t), cos(t), 0,
-      0, 0, 0, 1);
-  }
+    this.forewingLGeo.vertices[5].applyMatrix4(forewingCWMatrix);
+    this.forewingLGeo.vertices[7].applyMatrix4(forewingCWMatrix);
+    this.forewingLGeo.vertices[0].applyMatrix4(forewingCWMatrix);
+    this.forewingLGeo.vertices[2].applyMatrix4(forewingCWMatrix);
+    // this.forewingLGeo.vertices[5].y = cos(this.phase);
+    // this.forewingLGeo.vertices[5].z = 2.5 + cos(this.phase);
+    // this.forewingLGeo.vertices[7].y = cos(this.phase);
+    // this.forewingLGeo.vertices[7].z = 2.5 + cos(this.phase);
 
-  this.forewingLGeo.vertices[5].applyMatrix4(wingLFlapMatrix);
-  this.forewingLGeo.vertices[7].applyMatrix4(wingLFlapMatrix);
-  this.forewingLGeo.vertices[0].applyMatrix4(wingLFlapMatrix);
-  this.forewingLGeo.vertices[2].applyMatrix4(wingLFlapMatrix);
-  this.forewingRGeo.vertices[4].applyMatrix4(wingRFlapMatrix);
-  this.forewingRGeo.vertices[6].applyMatrix4(wingRFlapMatrix);
-  this.forewingRGeo.vertices[1].applyMatrix4(wingRFlapMatrix);
-  this.forewingRGeo.vertices[3].applyMatrix4(wingRFlapMatrix);
+    this.forewingRGeo.vertices[4].applyMatrix4(forewingCCWMatrix);
+    this.forewingRGeo.vertices[6].applyMatrix4(forewingCCWMatrix);
+    this.forewingRGeo.vertices[1].applyMatrix4(forewingCCWMatrix);
+    this.forewingRGeo.vertices[3].applyMatrix4(forewingCCWMatrix);
+    // this.abdomen.rotation.z = cos(this.phase);
+  }
+  if (hindFlapDown) {
+    this.hindwingLGeo.vertices[5].applyMatrix4(forewingCCWMatrix);
+    this.hindwingLGeo.vertices[7].applyMatrix4(forewingCCWMatrix);
+    this.hindwingLGeo.vertices[0].applyMatrix4(forewingCCWMatrix);
+    this.hindwingLGeo.vertices[2].applyMatrix4(forewingCCWMatrix);
+
+    this.hindwingRGeo.vertices[4].applyMatrix4(forewingCWMatrix);
+    this.hindwingRGeo.vertices[6].applyMatrix4(forewingCWMatrix);
+    this.hindwingRGeo.vertices[1].applyMatrix4(forewingCWMatrix);
+    this.hindwingRGeo.vertices[3].applyMatrix4(forewingCWMatrix);
+  } else {
+    this.hindwingLGeo.vertices[5].applyMatrix4(forewingCWMatrix);
+    this.hindwingLGeo.vertices[7].applyMatrix4(forewingCWMatrix);
+    this.hindwingLGeo.vertices[0].applyMatrix4(forewingCWMatrix);
+    this.hindwingLGeo.vertices[2].applyMatrix4(forewingCWMatrix);
+
+    this.hindwingRGeo.vertices[4].applyMatrix4(forewingCCWMatrix);
+    this.hindwingRGeo.vertices[6].applyMatrix4(forewingCCWMatrix);
+    this.hindwingRGeo.vertices[1].applyMatrix4(forewingCCWMatrix);
+    this.hindwingRGeo.vertices[3].applyMatrix4(forewingCCWMatrix);
+  }
 
   this.forewingLGeo.verticesNeedUpdate = true;
+  this.hindwingLGeo.verticesNeedUpdate = true;
   this.forewingRGeo.verticesNeedUpdate = true;
+  this.hindwingRGeo.verticesNeedUpdate = true;
+
+  if (this.forewingLGeo.vertices[5].z < -2.3 || this.forewingLGeo.vertices[5].y < -2.8) {
+    foreFlapDown = !foreFlapDown;
+  }
+  if (this.forewingLGeo.vertices[5].y < 4.5 && foreFlapDown) {
+    hindFlapDown = true;
+  }
+  if (this.hindwingLGeo.vertices[5].y < -2.5) {
+    hindFlapDown = false;
+  }
 };
 
 function showAxes() {
