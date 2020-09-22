@@ -35,7 +35,7 @@ let camera;
 let aspectRatio;
 let renderer;
 let controls;
-let butterfly;
+const butterflies = [];
 
 function handleWindowResize() {
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -216,7 +216,8 @@ function Butterfly() {
 }
 
 function createButterfly() {
-  butterfly = new Butterfly();
+  const butterfly = new Butterfly();
+  butterflies.push(butterfly);
   scene.add(butterfly.mesh);
 }
 
@@ -359,7 +360,9 @@ function init() {
 
 function draw() {
   controls.update();
-  butterfly.fly();
+  butterflies.forEach((butterfly) => {
+    butterfly.fly();
+  });
   renderer.render(scene, camera);
   requestAnimationFrame(draw);
 }
