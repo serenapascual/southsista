@@ -41,7 +41,10 @@ function createScene() {
     farPlane,
   );
 
-  camera.position.x = 0;
+  // camera.position.x = 0;
+  // camera.position.y = 30;
+  // camera.position.z = -5;
+  camera.position.x = 10;
   camera.position.y = 40;
   camera.position.z = 175;
 
@@ -78,7 +81,7 @@ function createSwarm() {
 }
 
 function createTerrain() {
-  const terrainGeo = new THREE.BoxGeometry(121, 2, 121);
+  const terrainGeo = new THREE.BoxGeometry(120, 2, 120);
   const terrainMat = new THREE.MeshPhongMaterial({
     color: Colors.glacierGrey,
     flatShading: true,
@@ -120,9 +123,9 @@ function showAxes() {
 function init() {
   createScene();
   createLights();
-  createSwarm();
   createTerrain();
-  // showAxes();
+  createSwarm();
+  showAxes();
 }
 
 function draw() {
