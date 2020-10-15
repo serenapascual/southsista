@@ -41,12 +41,20 @@ function createScene() {
     farPlane,
   );
 
-  // camera.position.x = 0;
-  // camera.position.y = 30;
-  // camera.position.z = -5;
-  camera.position.x = 10;
-  camera.position.y = 40;
-  camera.position.z = 175;
+  // birds-eye
+  camera.position.x = 0;
+  camera.position.y = 200;
+  camera.position.z = 0;
+
+  // profile
+  // camera.position.x = 28.2;
+  // camera.position.y = 15;
+  // camera.position.z = 7.7;
+
+  // display
+  // camera.position.x = 10;
+  // camera.position.y = 40;
+  // camera.position.z = 175;
 
   renderer = new THREE.WebGLRenderer({
     alpha: true,
@@ -123,7 +131,7 @@ function showAxes() {
 function init() {
   createScene();
   createLights();
-  createTerrain();
+  // createTerrain();
   createSwarm();
   showAxes();
 }

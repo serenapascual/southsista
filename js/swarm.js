@@ -10,17 +10,19 @@ function rand(min, max) {
   return random() * (max - min) + min;
 }
 
-function genDirection() {
+// Generate random vector on perimeter of
+// plane spanning [-len, len] in the X and Z directions
+function genDirection(len) {
   const fixedX = floor(random() * floor(2));
   const positiveAxis = floor(random() * floor(2));
   if (fixedX) {
     if (positiveAxis) {
-      return new THREE.Vector3(60, 0, rand(-60, 60));
-    } return new THREE.Vector3(-60, 0, rand(-60, 60));
+      return new THREE.Vector3(len, 0, rand(-len, len));
+    } return new THREE.Vector3(-len, 0, rand(-len, len));
   }
   if (positiveAxis) {
-    return new THREE.Vector3(rand(-60, 60), 0, 60);
-  } return new THREE.Vector3(rand(-60, 60), 0, -60);
+    return new THREE.Vector3(rand(-len, len), 0, len);
+  } return new THREE.Vector3(rand(-len, len), 0, -len);
 }
 
 function Swarm() {
@@ -33,20 +35,21 @@ function Swarm() {
 
     this.butterflies[i].phase = i;
 
-    this.butterflies[i].rotateMatrix.set(
-      cos(i * 0.125 * PI), -sin(i * 0.125 * PI), 0, 0,
-      sin(i * 0.125 * PI), cos(i * 0.125 * PI), 0, 0,
-      0, 0, 1, 0,
-      0, 0, 0, 1,
-    );
+    // this.butterflies[i].rotateMatrix.set(
+    //   cos(i * 0.125 * PI), -sin(i * 0.125 * PI), 0, 0,
+    //   sin(i * 0.125 * PI), cos(i * 0.125 * PI), 0, 0,
+    //   0, 0, 1, 0,
+    //   0, 0, 0, 1,
+    // );
     this.butterflies[i].translateMatrix.set(
-      1, 0, 0, 6 * (i + 1),
-      0, 1, 0, 8 * (i + 1),
-      0, 0, 1, 4 * (i + 1),
+      1, 0, 0, 46 * (i + 0),
+      0, 1, 0, 38 * (i + 0),
+      0, 0, 1, 24 * (i + 0),
       0, 0, 0, 1,
     );
-
     this.butterflies[i].applyMatrices();
+
+    this.butterflies[i].velocity.set(0.1, 0, 0.1);
   }
 }
 
@@ -55,26 +58,27 @@ function Swarm() {
 // 2. Alignment - steer toward average heading of local swarmmates
 // 3. Cohesion - steer to move toward average position of local swarmmates
 
-let velocity = 1 / 200;
-const direction = genDirection();
+const xMin = -60;
+const xMax = 60;
+const zMin = -60;
+const zMax = 60;
 
 // Updated every frame
 Swarm.prototype.move = function () {
   this.butterflies.forEach((butterfly) => {
     // Keep butterfly within terrain
-    butterfly.rotate(direction.x, direction.y, direction.z);
-    if (butterfly.thorax.position.x < -60) {
-      direction.set(rand(0, 60), 0, rand(-60, 60));
-    } else if (butterfly.thorax.position.x > 60) {
-      direction.set(rand(-60, 0), 0, rand(-60, 60));
+    if (butterfly.thorax.position.x < xMin) {
+      butterfly.velocity.x += 0.1;
+    } else if (butterfly.thorax.position.x > xMax) {
+      butterfly.velocity.x -= 0.1;
     }
-    if (butterfly.thorax.position.z < -60) {
-      direction.set(rand(-60, 60), 0, rand(0, 60));
-    } else if (butterfly.thorax.position.z > 60) {
-      direction.set(rand(-60, 60), 0, rand(-60, 0));
+    if (butterfly.thorax.position.z < zMin) {
+      butterfly.velocity.z += 0.1;
+    } else if (butterfly.thorax.position.z > zMax) {
+      butterfly.velocity.z -= 0.1;
     }
-    butterfly.translate(direction.x * velocity, direction.y * velocity, direction.z * velocity);
-    // butterfly.flap();
+    butterfly.translate(butterfly.velocity);
+    butterfly.flap();
   });
 };
 
