@@ -269,10 +269,12 @@ Butterfly.prototype.applyMatrices = function () {
 };
 
 // Turn to face point in world space
-Butterfly.prototype.rotate = function (direction) {
+Butterfly.prototype.rotate = function () {
   const updateMeshes = (object) => {
     if (object instanceof THREE.Mesh) {
-      object.lookAt(direction.x, direction.y, direction.z);
+      const v = new THREE.Vector3();
+      v.addVectors(object.position, this.velocity);
+      object.lookAt(v);
     }
   };
   this.mesh.traverse(updateMeshes);
@@ -289,4 +291,5 @@ Butterfly.prototype.translate = function (velocity) {
   };
   this.mesh.traverse(updateMeshes);
 };
+
 export default Butterfly;

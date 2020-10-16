@@ -35,21 +35,17 @@ function Swarm() {
 
     this.butterflies[i].phase = i;
 
-    // this.butterflies[i].rotateMatrix.set(
-    //   cos(i * 0.125 * PI), -sin(i * 0.125 * PI), 0, 0,
-    //   sin(i * 0.125 * PI), cos(i * 0.125 * PI), 0, 0,
-    //   0, 0, 1, 0,
-    //   0, 0, 0, 1,
-    // );
+    // this.butterflies[i].rotateMatrix.makeRotationY(PI * i);
     this.butterflies[i].translateMatrix.set(
       1, 0, 0, 46 * (i + 0),
       0, 1, 0, 38 * (i + 0),
       0, 0, 1, 24 * (i + 0),
       0, 0, 0, 1,
     );
-    this.butterflies[i].applyMatrices();
 
-    this.butterflies[i].velocity.set(0.1, 0, 0.1);
+    this.butterflies[i].velocity.set(0.15, 0, 0.15);
+    this.butterflies[i].rotate(this.butterflies[i].velocity);
+    this.butterflies[i].applyMatrices();
   }
 }
 
@@ -68,14 +64,18 @@ Swarm.prototype.move = function () {
   this.butterflies.forEach((butterfly) => {
     // Keep butterfly within terrain
     if (butterfly.thorax.position.x < xMin) {
-      butterfly.velocity.x += 0.1;
+      butterfly.velocity.x += 0.05;
+      butterfly.rotate();
     } else if (butterfly.thorax.position.x > xMax) {
-      butterfly.velocity.x -= 0.1;
+      butterfly.velocity.x -= 0.05;
+      butterfly.rotate();
     }
     if (butterfly.thorax.position.z < zMin) {
-      butterfly.velocity.z += 0.1;
+      butterfly.velocity.z += 0.05;
+      butterfly.rotate();
     } else if (butterfly.thorax.position.z > zMax) {
-      butterfly.velocity.z -= 0.1;
+      butterfly.velocity.z -= 0.05;
+      butterfly.rotate();
     }
     butterfly.translate(butterfly.velocity);
     butterfly.flap();
