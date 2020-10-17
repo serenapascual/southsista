@@ -139,7 +139,7 @@ function Butterfly() {
   this.wings.traverse(createShadows);
 }
 
-Butterfly.prototype.flap = function () {
+Butterfly.prototype.flap = function flap() {
   this.phase += 0.07;
   let t = this.phase;
   t %= (2 * PI); // restrict range to [0, 2pi]
@@ -234,30 +234,26 @@ Butterfly.prototype.flap = function () {
   this.hindwingRGeo.verticesNeedUpdate = true;
 
   // Apply translations to all butterfly parts
-  this.antennaL.translateY(verticalGeneral * -0.035);
-  this.antennaR.translateY(verticalGeneral * -0.035);
-  this.head.translateY(verticalGeneral * -0.035);
-  this.thorax.translateY(verticalGeneral * -0.02);
-  this.abdomen.rotateX(verticalGeneral * 0.025);
-  this.forewingL.translateY(verticalGeneral * -0.02);
-  this.forewingR.translateY(verticalGeneral * -0.02);
-  this.hindwingL.translateY(verticalGeneral * -0.02);
-  this.hindwingR.translateY(verticalGeneral * -0.02);
+  // this.antennaL.translateY(verticalGeneral * -0.035);
+  // this.antennaR.translateY(verticalGeneral * -0.035);
+  // this.head.translateY(verticalGeneral * -0.035);
+  // this.thorax.translateY(verticalGeneral * -0.02);
+  // this.abdomen.rotateX(verticalGeneral * 0.025);
+  // this.forewingL.translateY(verticalGeneral * -0.02);
+  // this.forewingR.translateY(verticalGeneral * -0.02);
+  // this.hindwingL.translateY(verticalGeneral * -0.02);
+  // this.hindwingR.translateY(verticalGeneral * -0.02);
 };
 
-Butterfly.prototype.getRotateMatrix = function () {
-  return this.rotateMatrix;
+Butterfly.prototype.getPosition = function getPosition() {
+  return this.thorax.position;
 };
 
-Butterfly.prototype.getTranslateMatrix = function () {
-  return this.translateMatrix;
-};
-
-Butterfly.prototype.applyMatrices = function () {
+Butterfly.prototype.applyMatrices = function applyMatrices() {
   const updateMeshes = (object) => {
     if (object instanceof THREE.Mesh) {
-      object.applyMatrix4(this.getRotateMatrix());
-      object.applyMatrix4(this.getTranslateMatrix());
+      object.applyMatrix4(this.rotateMatrix);
+      object.applyMatrix4(this.translateMatrix);
     }
   };
 
@@ -269,7 +265,7 @@ Butterfly.prototype.applyMatrices = function () {
 };
 
 // Turn to face point in world space
-Butterfly.prototype.rotate = function () {
+Butterfly.prototype.rotate = function rotate() {
   const updateMeshes = (object) => {
     if (object instanceof THREE.Mesh) {
       const v = new THREE.Vector3();
@@ -281,7 +277,7 @@ Butterfly.prototype.rotate = function () {
 };
 
 // Local translate
-Butterfly.prototype.translate = function (velocity) {
+Butterfly.prototype.translate = function translate(velocity) {
   const updateMeshes = (object) => {
     if (object instanceof THREE.Mesh) {
       object.position.x += velocity.x;

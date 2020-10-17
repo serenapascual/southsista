@@ -89,7 +89,8 @@ function createSwarm() {
 }
 
 function createTerrain() {
-  const terrainGeo = new THREE.BoxGeometry(120, 2, 120);
+  const terrainGeo = new THREE.BoxGeometry(150, 2, 150);
+  terrainGeo.translate(0, -20, 0);
   const terrainMat = new THREE.MeshPhongMaterial({
     color: Colors.glacierGrey,
     flatShading: true,
@@ -131,9 +132,9 @@ function showAxes() {
 function init() {
   createScene();
   createLights();
-  // createTerrain();
+  createTerrain();
   createSwarm();
-  showAxes();
+  // showAxes();
 }
 
 function draw() {
