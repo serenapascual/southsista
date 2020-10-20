@@ -23,7 +23,7 @@ const brownMat = new THREE.MeshPhongMaterial({
   left hindwing, right hindwing.
 */
 function Butterfly() {
-  this.phase = 0;
+  this.position = new THREE.Vector3();
   this.rotateMatrix = new THREE.Matrix4();
   this.translateMatrix = new THREE.Matrix4();
   this.velocity = new THREE.Vector3();
@@ -245,10 +245,45 @@ Butterfly.prototype.flap = function flap() {
   // this.hindwingR.translateY(verticalGeneral * -0.02);
 };
 
+Butterfly.prototype.getId = function getId() {
+  return this.id;
+};
+
+Butterfly.prototype.setId = function setId(id) {
+  this.id = id;
+};
+
+Butterfly.prototype.getPhase = function getPhase() {
+  return this.phase;
+};
+
+Butterfly.prototype.setPhase = function setId(phase) {
+  this.phase = phase;
+};
+
+// Consider center of thorax to be butterfly's position
 Butterfly.prototype.getPosition = function getPosition() {
   return this.thorax.position;
 };
 
+Butterfly.prototype.getVelocity = function getVelocity() {
+  return this.velocity;
+};
+
+// Update component of velocity
+Butterfly.prototype.setVelocityX = function setVelocityX(delta) {
+  this.velocity.x += delta;
+};
+
+Butterfly.prototype.setVelocityY = function setVelocityY(delta) {
+  this.velocity.y += delta;
+};
+
+Butterfly.prototype.setVelocityZ = function setVelocityZ(delta) {
+  this.velocity.z += delta;
+};
+
+// Apply rotate and translate matrices
 Butterfly.prototype.applyMatrices = function applyMatrices() {
   const updateMeshes = (object) => {
     if (object instanceof THREE.Mesh) {
@@ -276,13 +311,13 @@ Butterfly.prototype.rotate = function rotate() {
   this.mesh.traverse(updateMeshes);
 };
 
-// Local translate
-Butterfly.prototype.translate = function translate(velocity) {
+// Local translate by velocity amount to current position
+Butterfly.prototype.translate = function translate() {
   const updateMeshes = (object) => {
     if (object instanceof THREE.Mesh) {
-      object.position.x += velocity.x;
-      object.position.y += velocity.y;
-      object.position.z += velocity.z;
+      object.position.x += this.velocity.x;
+      object.position.y += this.velocity.y;
+      object.position.z += this.velocity.z;
     }
   };
   this.mesh.traverse(updateMeshes);
